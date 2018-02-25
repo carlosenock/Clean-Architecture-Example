@@ -1,2 +1,2 @@
 # Clean-Architecture-Example
-Project created for testing and studying purposes
+Android project created for testing and studying purposes
