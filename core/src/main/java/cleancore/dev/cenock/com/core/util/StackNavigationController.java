@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import java.util.List;
 
 import cleancore.dev.cenock.com.core.R;
+import cleancore.dev.cenock.com.core.presentation.ui.fragment.BaseFragment;
 
 /**
  * Created by carlosenock on 2/25/18.

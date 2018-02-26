@@ -339,16 +339,12 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public void onSaveInstanceState(Bundle outState, RecyclerView recyclerView) {
-        //TODO restaurar la lista de otro modo con fenix
         outState.putParcelable(RV_STATE_KEY,recyclerView.getLayoutManager().onSaveInstanceState());
-        //outState.putParcelableArrayList(RV_DATA_KEY, (ArrayList<? extends Parcelable>) list);
         outState.putInt(RV_LAST_PAGE_KEY,lastPage);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState, RecyclerView recyclerView) {
         if(savedInstanceState==null)return;
-        //TODO restaurar la lista de otro modo con fenix
-        //list=savedInstanceState.getParcelableArrayList(RV_DATA_KEY);
         lastPage=savedInstanceState.getInt(RV_LAST_PAGE_KEY);
         recyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RV_STATE_KEY));
     }
