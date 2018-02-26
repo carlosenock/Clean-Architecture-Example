@@ -18,11 +18,11 @@ import cleancore.dev.cenock.com.core.R;
 import cleancore.dev.cenock.com.core.presentation.ui.adapter.holder.BaseViewHolder;
 
 /**
- * Created by carlosenock on 2/25/18.
+ * Created by carlosenock.
  */
 
-public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    protected static final int VIEW_TYPE_FOOTER= 34444;
+public abstract class BaseListAdapter<T, V extends BaseViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    protected static final int VIEW_TYPE_FOOTER = 34444;
     protected static final int VIEW_TYPE_ITEM = 5454;
     public static final int VIEW_TYPE_LOADING = 65656;
     private static final String RV_STATE_KEY = "rv_state";
@@ -40,22 +40,22 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     public BaseListAdapter() {
         this.list = new ArrayList<>();
         this.onItemClickListener = null;
-        setDefaults(false,false);
+        setDefaults(false, false);
     }
 
     public BaseListAdapter(List<T> list) {
         this.list = list;
         this.onItemClickListener = null;
-        setDefaults(false,false);
+        setDefaults(false, false);
     }
 
     public BaseListAdapter(List<T> list, OnItemClickListener<T> listener) {
-        this.list=list;
-        this.onItemClickListener=listener;
-        setDefaults(false,true);
+        this.list = list;
+        this.onItemClickListener = listener;
+        setDefaults(false, true);
     }
 
-    public void setDefaults(boolean hasFooter,boolean isItemClickable) {
+    public void setDefaults(boolean hasFooter, boolean isItemClickable) {
         setHasFooter(hasFooter);
         setItemClicklable(isItemClickable);
     }
@@ -66,8 +66,8 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public void setOnLoadMoreListener(final RecyclerView recyclerView, final int itemsPerPage, final OnLoadMoreListener mOnLoadMoreListener) {
-        isLoading=false;
-        this.itemsPerPage=itemsPerPage;
+        isLoading = false;
+        this.itemsPerPage = itemsPerPage;
         try {
             final NestedScrollView nestedScrollView = (NestedScrollView) recyclerView.getParent().getParent();
             nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -76,13 +76,13 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
                     if (v.getChildAt(v.getChildCount() - 1) != null) {
                         if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
                                 scrollY > oldScrollY) {
-                            if(attempToLoadMore(recyclerView,mOnLoadMoreListener)){
+                            if (attempToLoadMore(recyclerView, mOnLoadMoreListener)) {
                                 v.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         v.fullScroll(View.FOCUS_DOWN);
                                     }
-                                },100);
+                                }, 100);
                             }
                         }
                     }
@@ -93,9 +93,9 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     int lastVisiblePosition = getLastVisiblePosition(recyclerView.getLayoutManager());
-                    if (lastVisiblePosition >= getItemCount()-2) {
-                        if(attempToLoadMore(recyclerView,mOnLoadMoreListener)){
-                            recyclerView.getLayoutManager().scrollToPosition(list.size()-1);
+                    if (lastVisiblePosition >= getItemCount() - 2) {
+                        if (attempToLoadMore(recyclerView, mOnLoadMoreListener)) {
+                            recyclerView.getLayoutManager().scrollToPosition(list.size() - 1);
                         }
                     }
                 }
@@ -108,21 +108,21 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     private int getLastVisiblePosition(RecyclerView.LayoutManager layoutManager) {
-        if(layoutManager instanceof LinearLayoutManager)
-            return ((LinearLayoutManager)layoutManager).findLastCompletelyVisibleItemPosition();
+        if (layoutManager instanceof LinearLayoutManager)
+            return ((LinearLayoutManager) layoutManager).findLastCompletelyVisibleItemPosition();
         else return 0;
     }
 
     private boolean attempToLoadMore(View view, final OnLoadMoreListener loadMoreListener) {
         if (!isLoading) {
             final int page = getPage();
-            if (loadMoreListener != null&&page!=lastPage&&page>0) {
+            if (loadMoreListener != null && page != lastPage && page > 0) {
                 view.post(new Runnable() {
                     @Override
                     public void run() {
                         setLoading(true);
                         loadMoreListener.onLoadMore(page);
-                        lastPage=page;
+                        lastPage = page;
                     }
                 });
                 return true;
@@ -133,20 +133,20 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
 
     private int getPage() {
         int page;
-        if(getList() == null || getList().size()==0)
-            page=0;
+        if (getList() == null || getList().size() == 0)
+            page = 0;
         else
-            page=(getList().size()/itemsPerPage);
+            page = (getList().size() / itemsPerPage);
         return page;
     }
 
     public void setLoading(boolean loading) {
-        if(list==null)return;
+        if (list == null) return;
         isLoading = loading;
-        if(loading){
+        if (loading) {
             list.add(null);
-            notifyItemInserted(list.size()-1);
-        }else if(!list.isEmpty()&&list.indexOf(null)!=-1){
+            notifyItemInserted(list.size() - 1);
+        } else if (!list.isEmpty() && list.indexOf(null) != -1) {
             int index = list.indexOf(null);
             list.remove(index);
             notifyItemRemoved(index);
@@ -154,18 +154,18 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     protected void setItemClicklable(boolean clicklable) {
-        this.isItemClickable=clicklable;
+        this.isItemClickable = clicklable;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(list==null)return 0;
+        if (list == null) return 0;
         int footerIndex = list.size();
-        if (hasFooter&&(position ==footerIndex)) {
+        if (hasFooter && (position == footerIndex)) {
             return VIEW_TYPE_FOOTER;
         }
-        int loadingIndex = list.size()-1;
-        if (list.get(position)==null&&position == loadingIndex){
+        int loadingIndex = list.size() - 1;
+        if (list.get(position) == null && position == loadingIndex) {
             return VIEW_TYPE_LOADING;
         }
         return VIEW_TYPE_ITEM;
@@ -174,13 +174,13 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int idLayout = viewType == VIEW_TYPE_LOADING ? R.layout.item_loading : getLayoutIdByType(viewType);
-        ViewDataBinding binding= DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),idLayout,parent,false);
-        View v= binding.getRoot();
+        ViewDataBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), idLayout, parent, false);
+        View v = binding.getRoot();
         if (viewType == VIEW_TYPE_FOOTER) {
             return getNewFooterViewHolder(v);
-        }else if(viewType==VIEW_TYPE_LOADING)
+        } else if (viewType == VIEW_TYPE_LOADING)
             return new LoadingViewHolder(v);
-        return createViewHolder(viewType,v);
+        return createViewHolder(viewType, v);
     }
 
     protected abstract RecyclerView.ViewHolder createViewHolder(int viewType, View v);
@@ -191,18 +191,18 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public void addAtFirst(T item) {
-        list.add(0,item);
+        list.add(0, item);
         notifyItemInserted(0);
     }
 
     public void add(T item) {
         list.add(item);
-        notifyItemInserted(list.size()-1);
+        notifyItemInserted(list.size() - 1);
     }
 
     public void setList(List<T> items, boolean notify) {
-        list=items;
-        if(notify)
+        list = items;
+        if (notify)
             notifyDataSetChanged();
     }
 
@@ -214,30 +214,30 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if(isItemClickable)
+        if (isItemClickable)
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(onItemClickListener!=null&&getItem(holder.getAdapterPosition())!=null)
-                        onItemClickListener.onItemClick(holder.getAdapterPosition(),getItem(holder.getAdapterPosition()));
+                    if (onItemClickListener != null && getItem(holder.getAdapterPosition()) != null)
+                        onItemClickListener.onItemClick(holder.getAdapterPosition(), getItem(holder.getAdapterPosition()));
                 }
             });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if(longClickListener!=null)
-                    longClickListener.onItemLongClick(holder,holder.getAdapterPosition(),getItem(holder.getAdapterPosition()));
-                return longClickListener!=null;
+                if (longClickListener != null)
+                    longClickListener.onItemLongClick(holder, holder.getAdapterPosition(), getItem(holder.getAdapterPosition()));
+                return longClickListener != null;
             }
         });
         if (holder instanceof LoadingViewHolder)
             onBindLoadingViewHolder((LoadingViewHolder) holder);
-        else if(getItem(position)!=null)
-            bindViewHolder((V) holder,position,getItem(position));
+        else if (getItem(position) != null)
+            bindViewHolder((V) holder, position, getItem(position));
     }
 
     protected void bindViewHolder(V holder, int position, T item) {
-        holder.bind(position,item);
+        holder.bind(position, item);
     }
 
     private void onBindLoadingViewHolder(LoadingViewHolder holder) {
@@ -246,13 +246,13 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public T getItem(int position) {
-        return position<0||list.size()==0||position>=list.size()?null:list.get(position);
+        return position < 0 || list.size() == 0 || position >= list.size() ? null : list.get(position);
     }
 
     @Override
     public int getItemCount() {
-        int count = list==null?0:list.size();
-        if(hasFooter)
+        int count = list == null ? 0 : list.size();
+        if (hasFooter)
             count++;
         return count;
     }
@@ -266,69 +266,70 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public void setList(List<T> items) {
-        setList(items,true);
+        setList(items, true);
     }
 
     public boolean isItemVisible(LinearLayoutManager layoutManager, int i) {
         int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
         int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-        return i>=firstVisibleItem&&i<=lastVisibleItem;
+        return i >= firstVisibleItem && i <= lastVisibleItem;
     }
 
-    public boolean isItemVisible(int firstVisibleItem,int lastVisibleItem, int i) {
-        return i>=firstVisibleItem&&i<=lastVisibleItem;
+    public boolean isItemVisible(int firstVisibleItem, int lastVisibleItem, int i) {
+        return i >= firstVisibleItem && i <= lastVisibleItem;
     }
 
     /**
      * Return true if item was added, and return false if item was changed
+     *
      * @param item
      * @return
      */
-    public boolean addOrUpdate(T item,boolean notify) {
+    public boolean addOrUpdate(T item, boolean notify) {
         int index = list.indexOf(item);
-        if(index==-1){
+        if (index == -1) {
             list.add(item);
-            if(notify)
-                notifyItemInserted(list.size()-1);
-        }else{
-            list.set(index,item);
-            if(notify)
+            if (notify)
+                notifyItemInserted(list.size() - 1);
+        } else {
+            list.set(index, item);
+            if (notify)
                 notifyItemChanged(index);
         }
-        return index!=-1;
+        return index != -1;
     }
 
     public boolean addOrUpdate(T item) {
-        return addOrUpdate(item,true);
+        return addOrUpdate(item, true);
     }
 
     public void addAll(List<T> newItems) {
         int itemCount = list.size();
         list.addAll(newItems);
-        notifyItemRangeInserted(itemCount,newItems.size());
+        notifyItemRangeInserted(itemCount, newItems.size());
     }
 
     public void remove(T item) {
         int index = list.indexOf(item);
-        if(index!=-1) {
+        if (index != -1) {
             list.remove(index);
             notifyItemRemoved(index);
         }
     }
 
     public T getLastItem() {
-        return list!=null&&!list.isEmpty()?list.get(list.size()-1):null;
+        return list != null && !list.isEmpty() ? list.get(list.size() - 1) : null;
     }
 
     public void updateItem(T value) {
         int index = list.indexOf(value);
-        if(index!=-1){
-            updateItem(value,index);
+        if (index != -1) {
+            updateItem(value, index);
         }
     }
 
     public void updateItem(T item, int i) {
-        list.set(i,item);
+        list.set(i, item);
         notifyItemChanged(i);
     }
 
@@ -339,23 +340,23 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
     }
 
     public void onSaveInstanceState(Bundle outState, RecyclerView recyclerView) {
-        outState.putParcelable(RV_STATE_KEY,recyclerView.getLayoutManager().onSaveInstanceState());
-        outState.putInt(RV_LAST_PAGE_KEY,lastPage);
+        outState.putParcelable(RV_STATE_KEY, recyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putInt(RV_LAST_PAGE_KEY, lastPage);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState, RecyclerView recyclerView) {
-        if(savedInstanceState==null)return;
-        lastPage=savedInstanceState.getInt(RV_LAST_PAGE_KEY);
+        if (savedInstanceState == null) return;
+        lastPage = savedInstanceState.getInt(RV_LAST_PAGE_KEY);
         recyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RV_STATE_KEY));
     }
 
     public void setOnLongClickListener(OnItemLongClickListener<T> longClickListener) {
-        this.longClickListener=longClickListener;
+        this.longClickListener = longClickListener;
     }
 
-    public static abstract class OnItemLongClickListener<T>{
-        public void onItemLongClick(RecyclerView.ViewHolder holder, int adapterPosition, T item){
-            onItemLongClick(adapterPosition,item);
+    public static abstract class OnItemLongClickListener<T> {
+        public void onItemLongClick(RecyclerView.ViewHolder holder, int adapterPosition, T item) {
+            onItemLongClick(adapterPosition, item);
         }
 
         public abstract void onItemLongClick(int adapterPosition, T item);
@@ -363,9 +364,10 @@ public abstract class BaseListAdapter<T,V extends BaseViewHolder> extends Recycl
 
     static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
+
         public LoadingViewHolder(View itemView) {
             super(itemView);
-            progressBar= itemView.findViewById(R.id.progressBar);
+            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }
